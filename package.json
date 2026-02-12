@@ -1,0 +1,19 @@
+{
+  "name": "microservices-system",
+  "version": "1.0.0",
+  "private": true,
+  "workspaces": [
+    "api-gateway",
+    "services/*"
+  ],
+  "scripts": {
+    "dev:gateway": "node api-gateway/index.js",
+    "dev:users": "node services/users/index.js"
+  },
+  "dependencies": {
+    "express": "^5.2.1"
+  },
+  "engines": {
+    "node": ">=24"
+  }
+}
