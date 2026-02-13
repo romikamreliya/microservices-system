@@ -11,7 +11,10 @@
     "dev:users": "node services/users/index.js"
   },
   "dependencies": {
-    "express": "^5.2.1"
+    "body-parser": "^2.2.2",
+    "cors": "^2.8.6",
+    "express": "^5.2.1",
+    "helmet": "^8.1.0"
   },
   "engines": {
     "node": ">=24"
