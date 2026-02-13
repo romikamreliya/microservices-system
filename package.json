@@ -8,6 +8,7 @@
   ],
   "scripts": {
     "dev:gateway": "node api-gateway/index.js",
+    "dev:auth": "node services/auth/index.js",
     "dev:users": "node services/users/index.js"
   },
   "dependencies": {

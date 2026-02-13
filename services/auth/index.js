@@ -7,7 +7,7 @@ const apiRoutes = require("./routes/api.routes");
 
 class Main {
     constructor() {
-        this.PORT = services.userService.port;
+        this.PORT = services.authService.port;
         this.app = appConfig.app;
         this.server = http.createServer(this.app);
     }

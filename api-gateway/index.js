@@ -12,6 +12,7 @@ class Main {
 
     Routes() {
         this.app.use("/users",createProxyMiddleware({ target: `http://localhost:${services.userService.port}`, changeOrigin: true,}));
+        this.app.use("/auth",createProxyMiddleware({ target: `http://localhost:${services.authService.port}`, changeOrigin: true,}));
         this.app.use((req, res) => {res.status(404).json({ error: "Not found" })});
     }
 
