@@ -7,15 +7,24 @@
     "services/*"
   ],
   "scripts": {
+    "migrate": "node scripts/migrate.js",
+    "seed": "node scripts/seed.js",
     "dev:gateway": "node api-gateway/index.js",
     "dev:auth": "node services/auth/index.js",
     "dev:users": "node services/users/index.js"
   },
   "dependencies": {
+    "@app/shared": "./shared",
+    "ajv": "^8.18.0",
     "body-parser": "^2.2.2",
     "cors": "^2.8.6",
+    "dotenv": "^17.3.1",
     "express": "^5.2.1",
-    "helmet": "^8.1.0"
+    "helmet": "^8.1.0",
+    "jsonwebtoken": "^9.0.3",
+    "multer": "^2.0.2",
+    "mysql2": "^3.17.2",
+    "winston": "^3.19.0"
   },
   "engines": {
     "node": ">=24"

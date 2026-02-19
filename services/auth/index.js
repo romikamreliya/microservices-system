@@ -1,3 +1,4 @@
+require("dotenv").config();
 const services = require("../../config/services");
 const appConfig = require("../../config/app.config");
 const http = require("http");
