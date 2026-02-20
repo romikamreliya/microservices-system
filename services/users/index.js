@@ -2,6 +2,7 @@ require("dotenv").config();
 const services = require("../../config/services");
 const appConfig = require("../../config/app.config");
 const http = require("http");
+const {middlewares} = require("@app/shared");
 
 // Routes
 const apiRoutes = require("./routes/api.routes");
@@ -14,7 +15,7 @@ class Main {
     }
 
     Routes() {
-        this.app.use(/^\/(v1|v2)/, apiRoutes.getRoutes());
+        this.app.use(/^\/(v1|v2)/, middlewares.auth.userLogin, apiRoutes.getRoutes());
     }
 
     Initialize() {

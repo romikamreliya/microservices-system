@@ -4,6 +4,18 @@ const logger = require("../utils/logger.utils");
 
 class ApiMiddleware {
 
+  static userTokenCheck(req, res, next) {
+    try {
+      const headerToken = req.headers['authorization']?.replace('Bearer ', '');
+      if (!headerToken) {
+        return response.send({req, res, type:"UNAUTHORIZED", key:"UNAUTHORIZED"});
+      }
+    } catch (error) {
+      logger.createLog({ msg: error, name: "ApiMiddleware-userTokenCheck" });
+      return response.send({req, res, type:"INTERNAL_SERVER_ERROR", key:"INTERNAL_SERVER_ERROR"});
+    }
+  }
+
   /**
    * Middleware to check user login and verify token
    * @param {Object} req - Express request object
@@ -15,20 +27,20 @@ class ApiMiddleware {
 
       const headerToken = req.headers['authorization']?.replace('Bearer ', '');
       if (!headerToken) {
-        return response.error({ req, res, key: "UNAUTHORIZED" });
+        return response.send({req, res, type:"UNAUTHORIZED", key: "TOKEN_MISSING"});
       }
 
       // check Token
-      const tokenCheck = token.verifyCustomToken(headerToken);
+      const tokenCheck = token.verifyJwtAccessToken(headerToken);
       if (!tokenCheck.ok) {
-        return response.error({ req, res, key: tokenCheck.error });
+        return response.send({req, res, type: "UNAUTHORIZED", key: tokenCheck.error || "TOKEN_INVALID"});
       }
 
       req.tokenData = tokenCheck.data;
       next();
     } catch (error) {
       logger.createLog({ msg: error, name: "ApiMiddleware-userLogin" });
-      return response.error({ req, res, key: 'ERROR' });
+      return response.send({req, res, type:"INTERNAL_SERVER_ERROR"});
     }
   }
 

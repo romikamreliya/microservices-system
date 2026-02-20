@@ -26,9 +26,9 @@ class Main {
 
     Routes() {
         this.app.use("/auth", createProxyMiddleware(this.proxyMiddleware(services.authService)));
-        this.app.use("/users", shared.middlewares.auth.userLogin, createProxyMiddleware(this.proxyMiddleware(services.userService)));
+        this.app.use("/users", shared.middlewares.auth.userTokenCheck, createProxyMiddleware(this.proxyMiddleware(services.userService)));
         this.app.use((req, res) => {
-            return shared.utils.response.send({ req, res, type: "NOT_FOUND" });
+            return shared.utils.response.send({ req, res, type: "NOT_FOUND", key:"NOT_FOUND" });
         });
     }
 

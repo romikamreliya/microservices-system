@@ -1,19 +1,36 @@
+const {utils} = require("@app/shared");
 
 class TestController {
 
-  async test(req, res) {
+  async Get(req, res) {
     try {
-      return res.send({ message: "Test API is working!" });
+      return utils.response.send({req, res, type:"SUCCESS"});
     } catch (error) {
-      return res.send({ message: "Test API is working!" });
+      return utils.response.send({req, res, type:"INTERNAL_SERVER_ERROR"});
     }
   }
 
-  async token(req, res) {
+  async Create(req, res) {
     try {
-      return res.send({ message: "Token API is working!" });
+      return utils.response.send({req, res, type:"SUCCESS"});
     } catch (error) {
-      return res.send({ message: "Token API is working!" });
+      return utils.response.send({req, res, type:"INTERNAL_SERVER_ERROR"});
+    }
+  }
+
+  async Update(req, res) {
+    try {
+      return utils.response.send({req, res, type:"SUCCESS"});
+    } catch (error) {
+      return utils.response.send({req, res, type:"INTERNAL_SERVER_ERROR"});
+    }
+  }
+
+  async Delete(req, res) {
+    try {
+      return utils.response.send({req, res, type:"SUCCESS"});
+    } catch (error) {
+      return utils.response.send({req, res, type:"INTERNAL_SERVER_ERROR"});
     }
   }
 }

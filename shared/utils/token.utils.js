@@ -40,7 +40,7 @@ class TokenService {
   /**
    * Verify JWT access token
    * @param {string} token - JWT token to verify
-   * @returns {Object} Result object with ok flag and data/error
+   * @returns {{ ok: boolean, data?: any, error?: string }} Result object with ok flag and data/error
    */
   static verifyJwtAccessToken(token) {
     try {
@@ -82,7 +82,7 @@ class TokenService {
   /**
    * Verify custom AES encrypted token
    * @param {string} token - Encrypted token to verify
-   * @returns {Object} Result object with ok flag and data/error
+   * @returns {{ ok: boolean, data?: any, error?: string }} Result object with ok flag and data/error
    */
   static verifyCustomToken(token) {
     try {
@@ -99,12 +99,12 @@ class TokenService {
       );
 
       if (data.exp < Date.now()) {
-        return { ok: false, error: "custom_token_expired" };
+        return { ok: false, error: "TOKEN_EXPIRED" };
       }
 
       return { ok: true, data: data.data };
     } catch (err) {
-      return { ok: false, error: "invalid_custom_token" };
+      return { ok: false, error: "TOKEN_INVALID" };
     }
   }
 
@@ -145,7 +145,7 @@ class TokenService {
 
       // Check expiry
       if (Date.now() > exp) {
-        return { ok: false, error: "refresh_expired" };
+        return { ok: false, error: "TOKEN_EXPIRED" };
       }
 
       // Recalculate signature
@@ -156,12 +156,12 @@ class TokenService {
 
       // timing-safe compare
       if (!crypto.timingSafeEqual(Buffer.from(signature), Buffer.from(expectedSig))) {
-        return { ok: false, error: "invalid_signature" };
+        return { ok: false, error: "TOKEN_INVALID_SIGNATURE" };
       }
 
       return { ok: true };
     } catch (err) {
-      return { ok: false, error: "invalid_refresh_token" };
+      return { ok: false, error: "TOKEN_INVALID" };
     }
   }
 }

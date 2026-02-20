@@ -1,11 +1,10 @@
-const I18nUtils = require("../../shared/utils/i18n.utils");
+const i18n = require("../../shared/utils/i18n.utils");
+const message = require("../language/en/message");
 
 /**
  * Response utility class for API responses
  */
 class ResponseUtils {
-
-    static i18n = I18nUtils;
 
     static RES_CODES = {
         // ✅ Success
@@ -49,7 +48,7 @@ class ResponseUtils {
      * @param {Object} options.req - Express request
      * @param {Object} options.res - Express response
      * @param {keyof typeof ResponseUtils.RES_CODES} options.type - Response type (SUCCESS, CREATED, BAD_REQUEST...)
-     * @param {String} options.key - Translation key
+     * @param {keyof typeof message} options.key - Translation key
      * @param {Object} [options.data] - Response data
      * @returns {Object}
     */
@@ -82,7 +81,7 @@ class ResponseUtils {
         return res.status(status).json({
             success: true,
             code,
-            message: this.i18n.t({ key, len: req.lang }),
+            message: i18n.t({ key, len: req.lang }),
             data
         });
     }
@@ -101,7 +100,7 @@ class ResponseUtils {
         return res.status(status).json({
             success: false,
             code,
-            message: this.i18n.t({ key, len: req?.lang || 'en' })
+            message: i18n.t({ key, len: req?.lang || 'en' })
         });
     }
 }

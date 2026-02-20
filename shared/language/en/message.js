@@ -41,6 +41,7 @@ module.exports = {
   ACCESS_DENIED: "Access denied",
   TOKEN_EXPIRED: "Authentication token has expired.",
   TOKEN_INVALID: "Authentication token is invalid.",
+  TOKEN_INVALID_SIGNATURE: "Authentication token has an invalid signature.",
 
   // Data / Input
   INVALID_INPUT: "Invalid input data",
