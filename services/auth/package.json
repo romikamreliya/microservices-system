@@ -1,5 +1,15 @@
 {
   "name": "auth-service",
   "version": "1.0.0",
-  "main": "index.js"
+  "main": "index.js",
+
+  "dependencies": {
+    "http-proxy-middleware": "^3.0.5",
+    "@app/shared": "file:../../shared",
+    "express": "^5.2.1",
+    "body-parser": "^2.2.2",
+    "helmet": "^8.1.0",
+    "dotenv": "^17.3.1",
+    "cors": "^2.8.6"
+  }
 }

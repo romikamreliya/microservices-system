@@ -1,19 +1,26 @@
+const {utils} = require("@app/shared");
 
 class TestController {
 
   async test(req, res) {
     try {
-      return res.send({ message: "Test API is working!" });
+      return utils.response.send({req, res, type:"SUCCESS"});
     } catch (error) {
-      return res.send({ message: "Test API is working!" });
+      return utils.response.send({req, res, type:"INTERNAL_SERVER_ERROR"});
     }
   }
 
   async token(req, res) {
     try {
-      return res.send({ message: "Token API is working!" });
+
+      const token = utils.token.createJwtAccessToken({userId:"12345", email:"admin@gmail.com"});
+      if (!token) {
+        return utils.response.send({req, res, type:"INTERNAL_SERVER_ERROR"});
+      }
+
+      return utils.response.send({req, res, type:"SUCCESS", data:{token}});
     } catch (error) {
-      return res.send({ message: "Token API is working!" });
+      return utils.response.send({req, res, type:"INTERNAL_SERVER_ERROR"});
     }
   }
 }
