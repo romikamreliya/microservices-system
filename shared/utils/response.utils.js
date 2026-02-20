@@ -7,7 +7,7 @@ class ResponseUtils {
 
     static i18n = I18nUtils;
 
-    static ERROR_CODES = {
+    static RES_CODES = {
         // ✅ Success
         SUCCESS: { status: 200, success: true },
         CREATED: { status: 201, success: true },
@@ -48,7 +48,7 @@ class ResponseUtils {
      * @param {Object} options
      * @param {Object} options.req - Express request
      * @param {Object} options.res - Express response
-     * @param {String} options.type - Response type (SUCCESS, CREATED, BAD_REQUEST...)
+     * @param {keyof typeof ResponseUtils.RES_CODES} options.type - Response type (SUCCESS, CREATED, BAD_REQUEST...)
      * @param {String} options.key - Translation key
      * @param {Object} [options.data] - Response data
      * @returns {Object}
@@ -56,14 +56,14 @@ class ResponseUtils {
     static send({ req, res, type = "SUCCESS", key, data = null } = {}) {
         if (!req || !res) throw new Error("Request and Response objects are required");
         
-        const error = this.ERROR_CODES[type];
+        const error = this.RES_CODES[type];
         if (!error) {
-            throw new Error(`Invalid response type: ${type}`);
+            return this.error({ req, res, key: key || type, status: 500 });
         }
         if (error.success) {
-            return this.success({ req, res, key, data, status: error.status });
+            return this.success({ req, res, key: key || type, data, status: error.status });
         } else {
-            return this.error({ req, res, key, status: error.status });
+            return this.error({ req, res, key: key || type, status: error.status });
         }
     }
 

@@ -18,7 +18,7 @@ class Main {
             changeOrigin: true,
             on: {
                 error(err, req, res) {
-                    return shared.utils.response.error({req, res, status: 500, key: "Internal Server Error" });
+                    return shared.utils.response.send({req, res, type:"GATEWAY_TIMEOUT"});
                 }
             }
         }
@@ -26,11 +26,10 @@ class Main {
 
     Routes() {
         this.app.use("/auth", createProxyMiddleware(this.proxyMiddleware(services.authService)));
-        this.app.use("/users", 
-            shared.middlewares.auth.userLogin, 
-            createProxyMiddleware(this.proxyMiddleware(services.userService))
-        );
-        this.app.use((req, res) => {res.status(404).json({ error: "Not found" })});
+        this.app.use("/users", shared.middlewares.auth.userLogin, createProxyMiddleware(this.proxyMiddleware(services.userService)));
+        this.app.use((req, res) => {
+            return shared.utils.response.send({ req, res, type: "NOT_FOUND" });
+        });
     }
 
     Initialize() {
