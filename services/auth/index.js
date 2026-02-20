@@ -5,6 +5,7 @@ const http = require("http");
 
 // Routes
 const apiRoutes = require("./routes/api.routes");
+const { utils } = require("@app/shared");
 
 class Main {
     constructor() {
@@ -15,6 +16,9 @@ class Main {
 
     Routes() {
         this.app.use(/^\/(v1|v2)/, apiRoutes.getRoutes());
+        this.app.use((req, res) => {
+            return utils.response.send({ req, res, type: "NOT_FOUND", key:"NOT_FOUND" });
+        });
     }
 
     Initialize() {

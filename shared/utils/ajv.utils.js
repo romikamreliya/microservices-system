@@ -99,7 +99,7 @@ class ValidationUtils {
    * @property {Object} [properties] - Schema for object properties.
    * @property {string} [pattern] - Regex pattern (for strings).
    * @property {Array} [enum] - Allowed values.
-   * @property {"customEmail" | "customPhone" | "customWebsite"} [format] - Special format flag.
+   * @property {"customEmail" | "customPhone" | "customWebsite" | "customDate" | "customTime"} [format] - Special format flag.
    * @property {boolean} [required] - Whether field is required.
    */
   static prop(type, options = {}) {

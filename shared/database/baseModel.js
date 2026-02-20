@@ -7,6 +7,7 @@ class BaseModel {
     this.hidden = hidden;
     this.primaryKey = primaryKey;
     this.pageLimit = limit;
+    this.db_table = db;
   }
 
   clean(data) {
@@ -72,7 +73,7 @@ class BaseModel {
 
   // BASIC CRUD
   async get() {
-    return db(this.table);
+    return await this.db.findMany();
   }
 
   async find(query) {

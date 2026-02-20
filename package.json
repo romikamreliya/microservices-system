@@ -15,6 +15,8 @@
   },
   "dependencies": {
     "@app/shared": "./shared",
+    "@prisma/adapter-better-sqlite3": "^7.4.1",
+    "@prisma/client": "^7.4.1",
     "ajv": "^8.18.0",
     "body-parser": "^2.2.2",
     "cors": "^2.8.6",
@@ -28,5 +30,8 @@
   },
   "engines": {
     "node": ">=24"
+  },
+  "devDependencies": {
+    "prisma": "^7.4.1"
   }
 }

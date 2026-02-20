@@ -1,11 +1,7 @@
-const mysql = require("mysql2");
+const { PrismaBetterSqlite3 } = require("@prisma/adapter-better-sqlite3");
+const { PrismaClient } = require("../../prisma/generated/index.js"); 
 
-const pool = mysql.createPool({
-  host: process.env.DB_HOST,
-  user: process.env.DB_USER,
-  password: process.env.DB_PASS,
-  database: process.env.DB_NAME
-});
+const adapter = new PrismaBetterSqlite3({ url: process.env.DATABASE_URL });
+const prisma = new PrismaClient({ adapter });
 
-module.exports = pool;
-
+module.exports = prisma;

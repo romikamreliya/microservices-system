@@ -10,6 +10,7 @@ class ApiMiddleware {
       if (!headerToken) {
         return response.send({req, res, type:"UNAUTHORIZED", key:"UNAUTHORIZED"});
       }
+      next();
     } catch (error) {
       logger.createLog({ msg: error, name: "ApiMiddleware-userTokenCheck" });
       return response.send({req, res, type:"INTERNAL_SERVER_ERROR", key:"INTERNAL_SERVER_ERROR"});
