@@ -3,6 +3,10 @@ const {utils} = require("@app/shared");
 
 class TestController {
 
+  constructor() {
+    this.upload = new utils.upload();
+  }
+
   async Get(req, res) {
     try {
 
@@ -122,6 +126,25 @@ class TestController {
       usersModel.delete({id: Number(payload.id)});
 
       return utils.response.send({req, res, type:"DELETE"});
+    } catch (error) {
+      return utils.response.send({req, res, type:"INTERNAL_SERVER_ERROR"});
+    }
+  }
+
+  async UploadImg(req, res) {
+    try {
+
+      // upload images
+      await new Promise((resolve, reject) => {
+        this.upload.getUploadMiddleware().single("reviewProfile")(req, res, (err) => {
+          if (err) {
+            return reject(new Error(err.message));
+          }
+          return resolve();
+        });
+      });
+
+      return utils.response.send({req, res, type:"SUCCESS", data: req.file});
     } catch (error) {
       return utils.response.send({req, res, type:"INTERNAL_SERVER_ERROR"});
     }

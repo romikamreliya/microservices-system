@@ -24,6 +24,8 @@ class ApiRoutes {
     Router.put("/update", this.testController.Update.bind(this.testController));
     Router.delete("/delete", this.testController.Delete.bind(this.testController));
 
+    Router.post("/upload", this.testController.UploadImg.bind(this.testController));
+
     this.routes.use("/user", Router);
   }
 
