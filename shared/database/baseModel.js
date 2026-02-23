@@ -1,4 +1,4 @@
-const db = require("./connection");
+const prisma = require("./connection");
 
 class BaseModel {
   constructor({ table, columns = [], hidden = [], primaryKey = "id", limit = 10 }) {
@@ -7,7 +7,7 @@ class BaseModel {
     this.hidden = hidden;
     this.primaryKey = primaryKey;
     this.pageLimit = limit;
-    this.db_table = db;
+    this.db = prisma;
   }
 
   clean(data) {
@@ -68,39 +68,39 @@ class BaseModel {
       throw new Error(`SQL injection attempt detected: ${value}`);
     }
 
-    return value.toString().trim().replace(/\0/g, '');
+    return typeof value === 'string' ? value.trim().replace(/\0/g, '') : value;
   }
 
   // BASIC CRUD
   async get() {
-    return await this.db.findMany();
+    return await this.db[this.table].findMany();
   }
 
   async find(query) {
-    return db(this.table).where(this.clean(query));
+    return this.db[this.table].findMany({ where: this.clean(query) });
   }
 
   async findOne(query) {
-    return db(this.table).where(this.clean(query)).first();
+    return this.db[this.table].findFirst({ where: this.clean(query) });
   }
 
   async insert(data) {
-    return db(this.table).insert(this.clean(data));
+    return await this.db[this.table].create({ data: this.clean(data) });
   }
 
   async update(id, data) {
-    return db(this.table).where(this.primaryKey, id).update(this.clean(data));
+    return await this.db[this.table].update({
+      where: { [this.primaryKey]: id },
+      data: this.clean(data)
+    });
   }
 
   async delete(query) {
-    return db(this.table).where(this.clean(query)).del();
+    return await this.db[this.table].deleteMany({ where: this.clean(query) });
   }
 
   async count(query = {}) {
-    return db(this.table)
-      .where(this.clean(query))
-      .count(`${this.primaryKey} as count`)
-      .first();
+    return this.db[this.table].count({ where: this.clean(query) });
   }
 
   // PAGINATION + ADVANCED FILTERS
@@ -139,46 +139,39 @@ class BaseModel {
     order = [],
     pagination = true
   } = {}) {
-    let query = db(this.table).select(select);
 
-    // FILTERS
-    const cleaned = this.clean(filters);
-    for (const [field, cond] of Object.entries(cleaned)) {
-      if (typeof cond === "object") {
-        if (cond.like) query.where(field, "like", `%${cond.like}%`);
-        if (cond.eq) query.where(field, cond.eq);
-        if (cond.gt) query.where(field, ">", cond.gt);
-        if (cond.gte) query.where(field, ">=", cond.gte);
-        if (cond.lt) query.where(field, "<", cond.lt);
-        if (cond.lte) query.where(field, "<=", cond.lte);
-        if (cond.between) query.whereBetween(field, cond.between);
-        if (cond.in) query.whereIn(field, cond.in);
-        if (cond.notIn) query.whereNotIn(field, cond.notIn);
-        if (cond.null) query.whereNull(field);
-        if (cond.notNull) query.whereNotNull(field);
-      } else {
-        query.where(field, cond);
-      }
+    if (!pagination) {
+      return this.prisma[this.table].findMany({
+        where: this.clean(filters),
+        select,
+        orderBy: order.reduce((acc, o) => {
+          acc[o.column] = o.dir || "asc";
+          return acc;
+        }, {})
+      });
     }
-
-    // ORDER BY
-    order.forEach(o => {
-      if (o.column) query.orderBy(o.column, o.dir || "asc");
-    });
-
-    if (!pagination) return query.clone();
-
-    // PAGINATION
-    const data = await query.clone().limit(limit).offset((page - 1) * limit);
-    const total = await query.clone().count(`${this.primaryKey} as count`).first();
+    
+    const [data, total] = await this.prisma.$transaction([
+      this.prisma[this.table].findMany({
+        where: this.clean(filters),
+        select,
+        orderBy: order.reduce((acc, o) => {
+          acc[o.column] = o.dir || "asc";
+          return acc;
+        }, {}),
+        skip,
+        take: limit
+      }),
+      this.prisma[this.table].count({ where: this.clean(filters) })
+    ]);
 
     return {
       data,
       pagination: {
-        totalRows: total.count,
-        totalPages: Math.ceil(total.count / limit),
+        totalRows: total,
+        totalPages: Math.ceil(total / limit),
         currentPage: page,
-        limit,
+        limit
       }
     };
   }

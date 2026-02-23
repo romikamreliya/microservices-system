@@ -17,6 +17,24 @@ class Main {
             target: `http://localhost:${service.port}`, 
             changeOrigin: true,
             on: {
+                proxyReq(proxyReq, req, res) {
+
+                    const contentType = req.headers["content-type"];
+
+                    if (contentType && contentType.includes("multipart/form-data")) {
+                        return;
+                    }
+
+                     // ✅ JSON request
+                    if (contentType && contentType.includes("application/json") && req.body && Object.keys(req.body).length) {
+                        const bodyData = JSON.stringify(req.body);
+
+                        proxyReq.setHeader("Content-Type", "application/json");
+                        proxyReq.setHeader("Content-Length", Buffer.byteLength(bodyData));
+
+                        proxyReq.write(bodyData);
+                    }
+                },
                 error(err, req, res) {
                     return shared.utils.response.send({req, res, type:"GATEWAY_TIMEOUT"});
                 }

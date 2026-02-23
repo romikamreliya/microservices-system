@@ -10,7 +10,7 @@ class ResponseUtils {
         // ✅ Success
         SUCCESS: { status: 200, success: true },
         CREATED: { status: 201, success: true },
-        UPDATE: { status: 204, success: true },
+        UPDATE: { status: 202, success: true },
         DELETE: { status: 204, success: true },
         ACCEPTED: { status: 202, success: true },
         NO_CONTENT: { status: 204, success: true },

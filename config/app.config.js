@@ -11,6 +11,7 @@ const fs = require("fs");
 class AppConfig {
     constructor() {
         this.app = express();
+        this.allowedOrigins = process.env.ALLOWED_ORIGINS ? process.env.ALLOWED_ORIGINS.split(",") : [];
         this.middlewares();
     }
 

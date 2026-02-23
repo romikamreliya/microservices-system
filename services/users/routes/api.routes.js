@@ -19,7 +19,7 @@ class ApiRoutes {
   publicRoutes() {
     const Router = express.Router();
     
-    Router.post("/get", this.testController.Get.bind(this.testController));
+    Router.get("/get", this.testController.Get.bind(this.testController));
     Router.post("/create", this.testController.Create.bind(this.testController));
     Router.put("/update", this.testController.Update.bind(this.testController));
     Router.delete("/delete", this.testController.Delete.bind(this.testController));
