@@ -112,7 +112,7 @@ class BaseModel {
    * @param {Object} [options.filters={}] Filter conditions
    * @param {Boolean} [options.pagination=true] Filter conditions
    * @param {string|string[]} [options.select="*"] Columns to select
-   * @param {Array<{column: string, dir?: "asc"|"desc"}>} [options.order=[]] Sorting rules
+   * @param {Object<string, "asc"|"desc">} [options.order={}] Sorting order
    * @returns {Promise<Object|Array>} Paginated result object or array
    * @returns {Array<Object>} return.data Array of rows
    * @returns {Object} return.pagination Pagination info
@@ -127,7 +127,7 @@ class BaseModel {
    *   limit: 10,
    *   filters: { name: { like: "Romik" } },
    *   select: ["id","name","email"],
-   *   order: [{ column: "created_at", dir: "desc" }]
+   *   order: { created_at: "desc" }
    *   pagination: true,
    * });
    */
@@ -135,34 +135,28 @@ class BaseModel {
     page = 1,
     limit = this.pageLimit,
     filters = {},
-    select = "*",
-    order = [],
+    select = undefined,
+    order = {},
     pagination = true
   } = {}) {
 
     if (!pagination) {
-      return this.prisma[this.table].findMany({
-        where: this.clean(filters),
+      return this.db[this.table].findMany({
+        where: filters,
         select,
-        orderBy: order.reduce((acc, o) => {
-          acc[o.column] = o.dir || "asc";
-          return acc;
-        }, {})
+        orderBy: order
       });
     }
     
-    const [data, total] = await this.prisma.$transaction([
-      this.prisma[this.table].findMany({
-        where: this.clean(filters),
+    const [data, total] = await this.db.$transaction([
+      this.db[this.table].findMany({
+        where: filters,
         select,
-        orderBy: order.reduce((acc, o) => {
-          acc[o.column] = o.dir || "asc";
-          return acc;
-        }, {}),
-        skip,
+        orderBy: order,
+        skip: (page - 1) * limit,
         take: limit
       }),
-      this.prisma[this.table].count({ where: this.clean(filters) })
+      this.db[this.table].count({ where: filters })
     ]);
 
     return {

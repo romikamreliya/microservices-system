@@ -5,9 +5,34 @@ class TestController {
 
   async Get(req, res) {
     try {
-      const data = await usersModel.get();
+
+      const payload = {
+        pagination: req.query?.pagination || false,
+        page: req.query?.page || 1,
+        limit: req.query?.limit || 10,
+        search: req.query?.search || ""
+      }
+
+      const data = await usersModel.paginate({
+        limit: Number(payload.limit),
+        page: Number(payload.page),
+        pagination: payload.pagination == "true" ? true : false,
+        filters: {
+          ...(payload?.search && {
+            OR:[
+              {name: payload.search ? { contains: payload.search } : undefined},
+              {email: payload.search ? { contains: payload.search } : undefined}
+            ]
+          })
+        },
+        order: {
+          "name": "desc"
+        }
+      });
       return utils.response.send({req, res, type:"SUCCESS", data});
     } catch (error) {
+      console.log('error', error);
+      
       return utils.response.send({req, res, type:"INTERNAL_SERVER_ERROR"});
     }
   }
