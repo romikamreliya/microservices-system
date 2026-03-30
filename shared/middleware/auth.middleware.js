@@ -1,6 +1,6 @@
 const response = require("../utils/response.utils");
-const token = require("../utils/token.utils");
 const logger = require("../utils/logger.utils");
+const tokenUtils = require("../utils/token.utils");
 
 class ApiMiddleware {
 
@@ -13,7 +13,7 @@ class ApiMiddleware {
       }
 
       // check Token
-      const tokenCheck = token.verifyCustomToken(token);
+      const tokenCheck = tokenUtils.verifyJwtAccessToken(token);
       if (!tokenCheck.ok) {
         return response.send({ req, res, type: tokenCheck.error, message: tokenCheck.error });
       }
@@ -34,8 +34,6 @@ class ApiMiddleware {
 
     return async (req, res, next) => {
       try {
-
-        console.log('req.currentUser', req.currentUser);
         
         // Check if user is authenticated via token
         if (!req.currentUser) {

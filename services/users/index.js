@@ -15,7 +15,7 @@ class Main {
     }
 
     Routes() {
-        this.app.use(/^\/(v1|v2)/, apiRoutes.getRoutes());
+        this.app.use(/^\/(v1|v2)/, middlewares.auth.authenticateToken, apiRoutes.getRoutes());
         // Global Error Handler
         this.app.use(middlewares.error.globalErrorHandler.bind(middlewares.error));
     }
