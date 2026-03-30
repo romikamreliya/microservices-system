@@ -12,6 +12,9 @@ module.exports = {
     },
     middlewares: {
         auth: require('./middleware/auth.middleware'),
+        error: require('./middleware/error.middleware'),
+        rateLimit: require('./middleware/ratelimit.middleware'),
+        requestLogger: require('./middleware/request-logger.middleware'),
     },
     utils: {
         ajv: require('./utils/ajv.utils'),
@@ -22,7 +25,8 @@ module.exports = {
         memory: require('./utils/memory.utils'),
         response: require('./utils/response.utils'),
         token: require('./utils/token.utils'),
-        upload: require('./utils/upload.utils')
+        upload: require('./utils/upload.utils'),
+        appError: require('./utils/appError.utils'),
     }
 
 };
