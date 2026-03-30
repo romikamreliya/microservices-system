@@ -4,74 +4,65 @@ const logger = require("../utils/logger.utils");
 
 class ApiMiddleware {
 
-  static userTokenCheck(req, res, next) {
+  static authenticateToken(req, res, next) {
     try {
-      const headerToken = req.headers['authorization']?.replace('Bearer ', '');
-      if (!headerToken) {
-        return response.send({req, res, type:"UNAUTHORIZED", key:"UNAUTHORIZED"});
-      }
-      next();
-    } catch (error) {
-      logger.createLog({ msg: error, name: "ApiMiddleware-userTokenCheck" });
-      return response.send({req, res, type:"INTERNAL_SERVER_ERROR", key:"INTERNAL_SERVER_ERROR"});
-    }
-  }
+      const token = req.headers['authorization']?.replace('Bearer ', '');
 
-  /**
-   * Middleware to check user login and verify token
-   * @param {Object} req - Express request object
-   * @param {Object} res - Express response object
-   * @param {Function} next - Express next function
-   */
-  static userLogin(req, res, next) {
-    try {
-
-      const headerToken = req.headers['authorization']?.replace('Bearer ', '');
-      if (!headerToken) {
-        return response.send({req, res, type:"UNAUTHORIZED", key: "TOKEN_MISSING"});
+      if (!token) {
+        return response.send({req, res, type:"UNAUTHORIZED", message:"UNAUTHORIZED" });
       }
 
       // check Token
-      const tokenCheck = token.verifyJwtAccessToken(headerToken);
+      const tokenCheck = token.verifyCustomToken(token);
       if (!tokenCheck.ok) {
-        return response.send({req, res, type: "UNAUTHORIZED", key: tokenCheck.error || "TOKEN_INVALID"});
+        return response.send({ req, res, type: tokenCheck.error, message: tokenCheck.error });
       }
 
-      req.tokenData = tokenCheck.data;
+      req.currentUser = tokenCheck.data;
       next();
     } catch (error) {
       logger.createLog({ msg: error, name: "ApiMiddleware-userLogin" });
-      return response.send({req, res, type:"INTERNAL_SERVER_ERROR"});
+      return response.send({ req, res, type: "INTERNAL_SERVER_ERROR", message: "INTERNAL_SERVER_ERROR" });
     }
   }
 
-  /**
-   * Middleware to check user permissions
-   * @param {Object} options - Options object
-   * @param {string} options.moduleName - Module name for permission check
-   * @param {string} options.actionName - Action name for permission check
-   * @returns {Function} Express middleware function
-   */
-  static checkPermission({ moduleName, actionName }) {
+  static authorize(permissions = {}) {
     // Validate required parameters
-    if (!moduleName || !actionName) {
-      throw new Error("checkPermission: Both moduleName and actionName are required");
+    if (!permissions || Object.keys(permissions).length === 0) {
+      throw new Error("authorize: Permissions object is required");
     }
 
     return async (req, res, next) => {
       try {
+
+        console.log('req.currentUser', req.currentUser);
+        
         // Check if user is authenticated via token
-        if (!req.tokenData) {
-          return response.error({ req, res, key: "UNAUTHORIZED" });
+        if (!req.currentUser) {
+          return response.send({ req, res, type: "UNAUTHORIZED", message: "UNAUTHORIZED" });
         }
+
+        // IMPLEMENTED: Check permission logic
+        // const userPermissions = req.currentUser?.permissions || {};
+        // const allowed = Object.entries(permissions).some(
+        //   ([module, actions]) => {
+        //     if (!Array.isArray(userPermissions[module])) return false;
+        //     return actions.some(action => userPermissions[module].includes(action));
+        //   }
+        // );
+        
+        // if (!allowed) {
+        //   return response.send({ req, res, type: "FORBIDDEN", message: "INSUFFICIENT_PERMISSIONS" });
+        // }
 
         next();
       } catch (error) {
         logger.createLog({ msg: error.message, name: "PermissionMiddleware-checkPermission" });
-        return response.error({ req, res, key: "INTERNAL_ERROR" });
+        return response.send({ req, res, type: "INTERNAL_SERVER_ERROR", message: "INTERNAL_SERVER_ERROR" });
       }
     };
   }
+
 }
 
 module.exports = ApiMiddleware;

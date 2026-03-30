@@ -1,7 +1,7 @@
 const express = require("express");
 
 const testController = require("../controllers/test.controllers");
-
+const {middlewares} = require("@app/shared");
 /**
  * API routes handler
  */
@@ -19,10 +19,10 @@ class ApiRoutes {
   publicRoutes() {
     const Router = express.Router();
     
-    Router.get("/get", this.testController.Get.bind(this.testController));
-    Router.post("/create", this.testController.Create.bind(this.testController));
-    Router.put("/update", this.testController.Update.bind(this.testController));
-    Router.delete("/delete", this.testController.Delete.bind(this.testController));
+    Router.get("/get", middlewares.auth.authorize({"user":["read"]}), this.testController.Get.bind(this.testController));
+    Router.post("/create", middlewares.auth.authorize({"user":["create"]}), this.testController.Create.bind(this.testController));
+    Router.put("/update", middlewares.auth.authorize({"user":["update"]}), this.testController.Update.bind(this.testController));
+    Router.delete("/delete", middlewares.auth.authorize({"user":["delete"]}), this.testController.Delete.bind(this.testController));
 
     Router.post("/upload", this.testController.UploadImg.bind(this.testController));
 

@@ -44,7 +44,7 @@ class Main {
 
     Routes() {
         this.app.use("/auth", createProxyMiddleware(this.proxyMiddleware(services.authService)));
-        this.app.use("/users", shared.middlewares.auth.userTokenCheck, createProxyMiddleware(this.proxyMiddleware(services.userService)));
+        this.app.use("/users", shared.middlewares.auth.authenticateToken, createProxyMiddleware(this.proxyMiddleware(services.userService)));
         // Global Error Handler
         this.app.use(shared.middlewares.error.globalErrorHandler.bind(shared.middlewares.error));
     }
