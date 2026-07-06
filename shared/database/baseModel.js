@@ -1,4 +1,5 @@
 const prisma = require("./connection");
+const mysql = require("./mysql");
 
 class BaseModel {
   constructor({ table, columns = [], hidden = [], primaryKey = "id", limit = 10 }) {
@@ -8,6 +9,7 @@ class BaseModel {
     this.primaryKey = primaryKey;
     this.pageLimit = limit;
     this.db = prisma;
+    this.mysql = mysql;
   }
 
   clean(data) {

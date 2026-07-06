@@ -3,7 +3,8 @@ module.exports = {
         constants: require('./constants/constants'),
     },
     database: {
-        baseModel: require('./database/baseModel')
+        baseModel: require('./database/baseModel'),
+        mysql: require('./database/mysql'),
     },
     language: {
         en: {
