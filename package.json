@@ -7,32 +7,34 @@
     "services/*"
   ],
   "scripts": {
-    "migrate": "node scripts/migrate.js",
-    "seed": "node scripts/seed.js",
+    "migrate": "node prisma/script.js",
     "dev:gateway": "node api-gateway/index.js",
     "dev:auth": "node services/auth/index.js",
     "dev:users": "node services/users/index.js"
   },
   "dependencies": {
     "@app/shared": "./shared",
-    "@prisma/adapter-better-sqlite3": "^7.4.1",
-    "@prisma/client": "^7.4.1",
-    "ajv": "^8.18.0",
-    "body-parser": "^2.2.2",
+    "@prisma/adapter-better-sqlite3": "^7.8.0",
+    "@prisma/client": "^7.8.0",
+    "ajv": "^8.20.0",
+    "body-parser": "^2.3.0",
     "cors": "^2.8.6",
-    "dotenv": "^17.3.1",
+    "dotenv": "^17.4.2",
     "express": "^5.2.1",
-    "express-rate-limit": "^8.3.1",
-    "helmet": "^8.1.0",
+    "express-rate-limit": "^8.5.2",
+    "helmet": "^8.2.0",
     "jsonwebtoken": "^9.0.3",
-    "multer": "^2.0.2",
-    "mysql2": "^3.17.3",
+    "multer": "^2.2.0",
+    "mysql2": "^3.22.5",
     "winston": "^3.19.0"
   },
   "engines": {
     "node": ">=24"
   },
+  "prisma": {
+    "seed": "node scripts/seed.js"
+  },
   "devDependencies": {
-    "prisma": "^7.4.1"
+    "prisma": "^7.8.0"
   }
 }
