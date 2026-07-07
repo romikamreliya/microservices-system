@@ -15,10 +15,14 @@ class AppConfig {
         this.middlewares();
     }
 
-    crt = {
-        key: fs.readFileSync("./crt/localhost.key", 'utf8'),
-        cert: fs.readFileSync("./crt/localhost.crt", 'utf8')
-    };
+    // Loaded lazily (only when HTTPS is actually used) so a missing/untracked
+    // private key never breaks HTTP boot.
+    get crt() {
+        return {
+            key: fs.readFileSync("./crt/localhost.key", 'utf8'),
+            cert: fs.readFileSync("./crt/localhost.crt", 'utf8')
+        };
+    }
 
     helmetConfig = {
         contentSecurityPolicy: {

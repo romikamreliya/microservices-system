@@ -4,3 +4,6 @@
 /prisma/generated
 /prisma/migrations
 dev.db
+
+# TLS private keys must never be committed
+crt/*.key

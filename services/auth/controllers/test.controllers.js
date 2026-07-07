@@ -13,7 +13,18 @@ class TestController {
   async token(req, res) {
     try {
 
-      const token = utils.token.createJwtAccessToken({userId:"12345", email:"admin@gmail.com"});
+      // Development-only helper: mints a signed token for local testing.
+      // Disabled outside development so it can never issue credentials in a
+      // deployed environment. Replace with a real credential-checked login.
+      if (process.env.ENV !== "development") {
+        return utils.response.send({req, res, type:"NOT_FOUND"});
+      }
+
+      const token = utils.token.createJwtAccessToken({
+        userId: "12345",
+        email: "admin@gmail.com",
+        permissions: { user: ["read", "create", "update", "delete"] }
+      });
       if (!token) {
         return utils.response.send({req, res, type:"INTERNAL_SERVER_ERROR"});
       }

@@ -10,13 +10,16 @@ class ResponseUtils {
         // ✅ Success
         SUCCESS: { status: 200, success: true },
         CREATED: { status: 201, success: true },
-        UPDATE: { status: 202, success: true },
-        DELETE: { status: 204, success: true },
+        UPDATE: { status: 200, success: true },
+        UPDATED: { status: 200, success: true },
+        DELETE: { status: 200, success: true },
+        DELETED: { status: 200, success: true },
         ACCEPTED: { status: 202, success: true },
         NO_CONTENT: { status: 204, success: true },
 
         // ❌ Client Errors
         BAD_REQUEST: { status: 400, success: false },
+        VALIDATION_ERROR: { status: 422, success: false },
         UNAUTHORIZED: { status: 401, success: false },
         PAYMENT_REQUIRED: { status: 402, success: false },
         FORBIDDEN: { status: 403, success: false },

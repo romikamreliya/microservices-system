@@ -10,6 +10,7 @@ module.exports = {
   // CRUD
   CREATED: "Resource created successfully",
   UPDATED: "Resource updated successfully",
+  DELETE: "Resource deleted successfully",
   DELETED: "Resource deleted successfully",
 
   // Error
