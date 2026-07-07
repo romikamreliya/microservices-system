@@ -18,7 +18,15 @@ class TokenService {
 
   // Custom AES Token
   static aesExpireMs = parseInt(24 * 60 * 60 * 1000); // 24 hours
-  static aesKey = crypto.pbkdf2Sync(process.env.accessTokenKey, 'salt', 100000, 32, 'sha256');
+  // Use a dedicated encryption key so the AES key material is not shared with
+  // the JWT signing secret. Falls back to accessTokenKey for compatibility.
+  static aesKey = crypto.pbkdf2Sync(
+    process.env.tokenEncryptionKey || process.env.accessTokenKey,
+    process.env.tokenEncryptionSalt || 'salt',
+    100000,
+    32,
+    'sha256'
+  );
   static algorithm = "aes-256-gcm";
 
   // =========================================================

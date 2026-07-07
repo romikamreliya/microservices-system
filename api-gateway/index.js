@@ -65,11 +65,7 @@ class Main {
 
     Start() {
         this.Initialize();
-        this.server.listen(this.PORT, () => {
-            const protocol = process.env.HTTPS_ENABLED === "true" ? "https" : "http";
-            console.log(`Server listening on ${protocol}://localhost:${this.PORT}`);
-        });
-        appConfig.gracefulShutdown(this.server);
+        appConfig.listen(this.server, this.PORT);
     }
 }
 

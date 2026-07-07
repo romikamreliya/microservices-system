@@ -106,6 +106,20 @@ class AppConfig {
         process.on('SIGTERM', () => shutdown('SIGTERM'));
         process.on('SIGINT', () => shutdown('SIGINT'));
     }
+
+    /**
+     * Start listening and wire graceful shutdown. Centralizes the boot log so
+     * the gateway and every service behave identically.
+     * @param {import('http').Server} server
+     * @param {number} port
+     */
+    listen(server, port) {
+        server.listen(port, () => {
+            const protocol = process.env.HTTPS_ENABLED === "true" ? "https" : "http";
+            console.log(`Server listening on ${protocol}://localhost:${port}`);
+        });
+        this.gracefulShutdown(server);
+    }
 }
 
 module.exports = new AppConfig();
