@@ -123,7 +123,7 @@ class TestController {
         return utils.response.send({req, res, type:"NOT_FOUND"});
       }
 
-      usersModel.delete({id: Number(payload.id)});
+      await usersModel.delete({id: Number(payload.id)});
 
       return utils.response.send({req, res, type:"DELETE"});
     } catch (error) {

@@ -4,6 +4,7 @@ const path = require('path');
 const cors = require('cors');
 const helmet = require("helmet");
 const fs = require("fs");
+const { middlewares } = require("@app/shared");
 
 /**
  * Express application configuration
@@ -63,13 +64,47 @@ class AppConfig {
     };
 
     middlewares() {
+        this.app.use(middlewares.requestId.handle);
         this.app.use(helmet(this.helmetConfig));
         this.app.use(bodyParser.urlencoded({ extended: false, limit: '10mb' }));
         this.app.use(bodyParser.json({ limit: '10mb' }));
+        this.app.use(middlewares.requestLogger.skip(['/health', '/public']));
+
+        // Health probe — unauthenticated, cheap, and mounted before routes so
+        // orchestrators (PM2, load balancers, k8s) can check liveness.
+        this.app.get('/health', (req, res) => {
+            res.status(200).json({
+                success: true,
+                status: 'ok',
+                service: process.env.NAME || 'service',
+                uptime: process.uptime(),
+                timestamp: new Date().toISOString()
+            });
+        });
+
         this.app.use('/public', express.static('public'));
         this.app.use(cors(this.corsOptions));
 
         console.log('✓ App Config Initialized Successfully');
+    }
+
+    /**
+     * Attach SIGTERM/SIGINT handlers that drain the HTTP server before exit,
+     * so in-flight requests finish and PM2/orchestrator restarts stay clean.
+     * @param {import('http').Server} server
+     */
+    gracefulShutdown(server) {
+        const shutdown = (signal) => {
+            console.log(`\n${signal} received — shutting down gracefully...`);
+            server.close(() => {
+                console.log('HTTP server closed');
+                process.exit(0);
+            });
+            // Force exit if connections do not drain within the grace period.
+            setTimeout(() => process.exit(1), 10000).unref();
+        };
+        process.on('SIGTERM', () => shutdown('SIGTERM'));
+        process.on('SIGINT', () => shutdown('SIGINT'));
     }
 }
 

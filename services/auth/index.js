@@ -31,6 +31,7 @@ class Main {
             const protocol = process.env.HTTPS_ENABLED === "true" ? "https" : "http";
             console.log(`Server listening on ${protocol}://localhost:${this.PORT}`);
         });
+        appConfig.gracefulShutdown(this.server);
     }
 }
 

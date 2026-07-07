@@ -17,7 +17,7 @@ class BaseModel {
       return {};
     }
 
-    const validColumns = new Set([...this.columns, this.hidden]);
+    const validColumns = new Set([...this.columns, ...this.hidden]);
 
     return Object.fromEntries(
       Object.entries(data)
@@ -49,28 +49,10 @@ class BaseModel {
       return value.trim().replace(/\0/g, '');
     }
 
-    const injectionPatterns = [
-      /(\bOR\b\s+\d+\s*=\s*\d+|\bOR\b\s+'[^']*'\s*=\s*'[^']*')/i,
-      /(\bAND\b\s+\d+\s*=\s*\d+|\bAND\b\s+'[^']*'\s*=\s*'[^']*')/i,
-      /\bUNION\b/i,
-      /\bSELECT\b/i,
-      /\bDROP\b/i,
-      /\bINSERT\b/i,
-      /\bUPDATE\b/i,
-      /\bDELETE\b/i,
-      /--/,
-      /\/\*/,
-      /;\s*(DROP|DELETE|UPDATE|INSERT)/i,
-      /xp_/i,
-      /sp_/i,
-    ];
-
-    // Check if value contains injection patterns
-    if (injectionPatterns.some(pattern => pattern.test(value))) {
-      throw new Error(`SQL injection attempt detected: ${value}`);
-    }
-
-    return typeof value === 'string' ? value.trim().replace(/\0/g, '') : value;
+    // Numbers, booleans, etc. — Prisma / mysql2 parameterization handles
+    // escaping, so no blocklist is applied (blocklists reject valid data and
+    // are trivially bypassable).
+    return value;
   }
 
   // BASIC CRUD

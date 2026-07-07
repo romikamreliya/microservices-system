@@ -20,6 +20,12 @@ class Main {
             on: {
                 proxyReq(proxyReq, req, res) {
 
+                    // Forward the correlation ID so downstream logs can be tied
+                    // back to the original gateway request.
+                    if (req.id) {
+                        proxyReq.setHeader("x-request-id", req.id);
+                    }
+
                     const contentType = req.headers["content-type"];
 
                     if (contentType && contentType.includes("multipart/form-data")) {
@@ -44,6 +50,9 @@ class Main {
     }
 
     Routes() {
+        // Rate limit at the edge (keyed by client IP before proxying).
+        this.app.use(shared.middlewares.rateLimit.defaultLimiter);
+
         this.app.use("/auth", createProxyMiddleware(this.proxyMiddleware(services.authService)));
         this.app.use("/users", createProxyMiddleware(this.proxyMiddleware(services.userService)));
         // Global Error Handler
@@ -60,6 +69,7 @@ class Main {
             const protocol = process.env.HTTPS_ENABLED === "true" ? "https" : "http";
             console.log(`Server listening on ${protocol}://localhost:${this.PORT}`);
         });
+        appConfig.gracefulShutdown(this.server);
     }
 }
 

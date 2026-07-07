@@ -15,6 +15,7 @@ module.exports = {
         auth: require('./middleware/auth.middleware'),
         error: require('./middleware/error.middleware'),
         rateLimit: require('./middleware/ratelimit.middleware'),
+        requestId: require('./middleware/request-id.middleware'),
         requestLogger: require('./middleware/request-logger.middleware'),
     },
     utils: {
