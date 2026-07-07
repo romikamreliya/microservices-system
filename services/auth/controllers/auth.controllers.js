@@ -1,6 +1,6 @@
 const {utils} = require("@app/shared");
 
-class TestController {
+class AuthController {
 
   async test(req, res) {
     try {
@@ -35,4 +35,4 @@ class TestController {
     }
   }
 }
-module.exports = new TestController();
+module.exports = new AuthController();

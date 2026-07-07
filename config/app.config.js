@@ -4,7 +4,7 @@ const path = require('path');
 const cors = require('cors');
 const helmet = require("helmet");
 const fs = require("fs");
-const { middlewares } = require("@app/shared");
+const { middlewares, utils } = require("@app/shared");
 
 /**
  * Express application configuration
@@ -85,7 +85,7 @@ class AppConfig {
         this.app.use('/public', express.static('public'));
         this.app.use(cors(this.corsOptions));
 
-        console.log('✓ App Config Initialized Successfully');
+        utils.logger.info('App config initialized');
     }
 
     /**
@@ -95,9 +95,9 @@ class AppConfig {
      */
     gracefulShutdown(server) {
         const shutdown = (signal) => {
-            console.log(`\n${signal} received — shutting down gracefully...`);
+            utils.logger.info(`${signal} received — shutting down gracefully`);
             server.close(() => {
-                console.log('HTTP server closed');
+                utils.logger.info('HTTP server closed');
                 process.exit(0);
             });
             // Force exit if connections do not drain within the grace period.
@@ -116,7 +116,7 @@ class AppConfig {
     listen(server, port) {
         server.listen(port, () => {
             const protocol = process.env.HTTPS_ENABLED === "true" ? "https" : "http";
-            console.log(`Server listening on ${protocol}://localhost:${port}`);
+            utils.logger.info(`${process.env.NAME || 'service'} listening on ${protocol}://localhost:${port}`);
         });
         this.gracefulShutdown(server);
     }

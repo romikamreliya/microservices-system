@@ -13,7 +13,8 @@ class TokenService {
 
   // Refresh Token
   static refreshBytes = parseInt(64, 10);
-  static refreshSecret = process.env.refressTokenKey;
+  // Correct spelling preferred; falls back to the legacy misspelled key.
+  static refreshSecret = process.env.refreshTokenKey || process.env.refressTokenKey;
   static refreshExpireMs = parseInt(7 * 24 * 60 * 60 * 1000); // 7 days  
 
   // Custom AES Token

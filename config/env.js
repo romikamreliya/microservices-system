@@ -10,7 +10,9 @@
  */
 
 // Variables every process needs to boot safely.
-const REQUIRED = ["DATABASE_URL", "accessTokenKey", "refressTokenKey"];
+const REQUIRED = ["DATABASE_URL", "accessTokenKey"];
+
+const isSet = (k) => process.env[k] !== undefined && String(process.env[k]).trim() !== "";
 
 /**
  * Validate that required env vars are present and non-empty.
@@ -19,10 +21,12 @@ const REQUIRED = ["DATABASE_URL", "accessTokenKey", "refressTokenKey"];
  */
 function validate(extra = []) {
   const keys = [...REQUIRED, ...extra];
-  const missing = keys.filter((k) => {
-    const v = process.env[k];
-    return v === undefined || String(v).trim() === "";
-  });
+  const missing = keys.filter((k) => !isSet(k));
+
+  // The refresh-token secret may use the correct or legacy spelling.
+  if (!isSet("refreshTokenKey") && !isSet("refressTokenKey")) {
+    missing.push("refreshTokenKey");
+  }
 
   if (missing.length) {
     console.error(

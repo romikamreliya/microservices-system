@@ -1,6 +1,6 @@
 const express = require("express");
 
-const testController = require("../controllers/test.controllers");
+const authController = require("../controllers/auth.controllers");
 
 /**
  * API routes handler
@@ -8,7 +8,7 @@ const testController = require("../controllers/test.controllers");
 class ApiRoutes {
   constructor() {
     this.routes = express.Router();
-    this.testController = testController;
+    this.authController = authController;
     this.registerRoutes();
   }
 
@@ -19,8 +19,8 @@ class ApiRoutes {
   publicRoutes() {
     const Router = express.Router();
 
-    Router.get("/test", this.testController.test.bind(this.testController));
-    Router.get("/token", this.testController.token.bind(this.testController));
+    Router.get("/test", this.authController.test.bind(this.authController));
+    Router.get("/token", this.authController.token.bind(this.authController));
 
     this.routes.use("/user", Router);
   }

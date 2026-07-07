@@ -1,7 +1,7 @@
 const usersModel = require("../model/users.model");
 const {utils} = require("@app/shared");
 
-class TestController {
+class UserController {
 
   constructor() {
     this.upload = new utils.upload();
@@ -150,4 +150,4 @@ class TestController {
     }
   }
 }
-module.exports = new TestController();
+module.exports = new UserController();

@@ -1,6 +1,6 @@
 const express = require("express");
 
-const testController = require("../controllers/test.controllers");
+const userController = require("../controllers/user.controllers");
 const {middlewares} = require("@app/shared");
 /**
  * API routes handler
@@ -8,7 +8,7 @@ const {middlewares} = require("@app/shared");
 class ApiRoutes {
   constructor() {
     this.routes = express.Router();
-    this.testController = testController;
+    this.userController = userController;
     this.registerRoutes();
   }
 
@@ -19,12 +19,12 @@ class ApiRoutes {
   publicRoutes() {
     const Router = express.Router();
     
-    Router.get("/get", middlewares.auth.authorize({"user":["read"]}), this.testController.Get.bind(this.testController));
-    Router.post("/create", middlewares.auth.authorize({"user":["create"]}), this.testController.Create.bind(this.testController));
-    Router.put("/update", middlewares.auth.authorize({"user":["update"]}), this.testController.Update.bind(this.testController));
-    Router.delete("/delete", middlewares.auth.authorize({"user":["delete"]}), this.testController.Delete.bind(this.testController));
+    Router.get("/get", middlewares.auth.authorize({"user":["read"]}), this.userController.Get.bind(this.userController));
+    Router.post("/create", middlewares.auth.authorize({"user":["create"]}), this.userController.Create.bind(this.userController));
+    Router.put("/update", middlewares.auth.authorize({"user":["update"]}), this.userController.Update.bind(this.userController));
+    Router.delete("/delete", middlewares.auth.authorize({"user":["delete"]}), this.userController.Delete.bind(this.userController));
 
-    Router.post("/upload", this.testController.UploadImg.bind(this.testController));
+    Router.post("/upload", this.userController.UploadImg.bind(this.userController));
 
     this.routes.use("/user", Router);
   }
